@@ -1,0 +1,59 @@
+{% set sha256sum = "d7f40d0cac95a06cea6cb5b7f7769085257caebc3ee84269dd9298da760d5615" %}
+{% set version = "3.1.0" %}
+package:
+  name: bazel
+  version: {{ version }}
+
+source:
+  url: https://github.com/bazelbuild/bazel/releases/download/{{ version }}/bazel-{{ version }}-dist.zip
+  sha256: {{ sha256sum }}
+  patches:
+    - 0006-Add-support-for-ppc64le-embedded-jdk.patch 
+
+build:
+  number: 1
+  ignore_prefix_files: True
+  binary_relocation: False  # [osx]
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - patch  # [unix]
+    - {{ cdt('java-1.8.0-openjdk-devel') }}  # [linux]
+    - {{ cdt('zip') }}  # [linux]
+  host:
+    - unzip
+
+  run:
+    - posix  # [win]
+
+test:
+  requires:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  commands:
+    - bazel -h
+    - readelf -d $PREFIX/bin/bazel  # [linux]
+    - conda inspect linkages -p $PREFIX bazel # [unix]
+    # manually check that -lstdc++ appears in the bundled unix_cc_configure.bzl
+    # tar xf /path/to/pkgs/bazel-0.5.4-hf484d3e_0.tar.bz2 bin/bazel
+    # unzip -p bin/bazel embedded_tools/tools/cpp/unix_cc_configure.bzl | grep stdc++
+
+about:
+  home: https://www.bazel.io/
+  summary: build system originally authored by Google
+  description: |
+    Bazel is Google's own build tool, now publicly available in Beta. Bazel has
+    built-in support for building both client and server software, including
+    client applications for both Android and iOS platforms. It also provides an
+    extensible framework that you can use to develop your own build rules.
+  dev_url: https://github.com/bazelbuild/bazel
+  doc_url: https://www.bazel.io/versions/master/docs/install.html
+  license: Apache 2.0
+  license_family: Apache
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - open-ce/open-ce-dev-team   

@@ -1,0 +1,185 @@
+From cb4bae599daed39971b8fa22fcd4698255031a88 Mon Sep 17 00:00:00 2001
+From: Nishidha Panpaliya <npanpa23@in.ibm.com>
+Date: Fri, 29 May 2020 12:06:21 +0000
+Subject: [PATCH] Add support for ppc64le embedded jdk
+
+---
+ WORKSPACE                                                |  8 ++++++++
+ compile.sh                                               |  6 ++++--
+ src/BUILD                                                |  3 +++
+ src/conditions/BUILD                                     |  6 ++++++
+ src/conditions/BUILD.tools                               |  6 ++++++
+ .../devtools/build/lib/bazel/rules/java/jdk.WORKSPACE    |  9 +++++++++
+ src/minimize_jdk.sh                                      | 16 ++++++++++++----
+ tools/jdk/BUILD                                          |  1 +
+ 8 files changed, 49 insertions(+), 6 deletions(-)
+
+diff --git a/WORKSPACE b/WORKSPACE
+index e886bed..e0c3e65 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -276,6 +276,14 @@ distdir_tar(
+     },
+ )
+ 
++http_file(
++    name = "openjdk_linux_ppc64le_vanilla",
++    downloaded_file_path="adoptopenjdk-ppc64le-vanilla.tar.gz",
++    urls = [
++        "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_ppc64le_linux_hotspot_11.0.2_9.tar.gz",
++    ],
++)
++
+ # OpenJDK distributions used to create a version of Bazel bundled with the OpenJDK.
+ http_file(
+     name = "openjdk_linux",
+diff --git a/compile.sh b/compile.sh
+index d91583d..e84a80b 100755
+--- a/compile.sh
++++ b/compile.sh
+@@ -63,12 +63,14 @@ display "."
+ log "Building output/bazel"
+ # We set host and target platform directly because we are building for the local
+ # host.
+-bazel_build "src:bazel_nojdk${EXE_EXT}" \
++bazel_build ${BAZEL_BUILD_OPTS} "src:bazel_dev_jdk${EXE_EXT}" \
+   --action_env=PATH \
++  --distinct_host_configuration=false \
++  --javabase=@bazel_tools//tools/jdk:jdk \
+   --host_platform=@local_config_platform//:host \
+   --platforms=@local_config_platform//:host \
+   || fail "Could not build Bazel"
+-bazel_bin_path="$(get_bazel_bin_path)/src/bazel_nojdk${EXE_EXT}"
++bazel_bin_path="$(get_bazel_bin_path)/src/bazel_dev_jdk${EXE_EXT}"
+ [ -e "$bazel_bin_path" ] \
+   || fail "Could not find freshly built Bazel binary at '$bazel_bin_path'"
+ cp -f "$bazel_bin_path" "output/bazel${EXE_EXT}" \
+diff --git a/src/BUILD b/src/BUILD
+index 32dd215..4c4256a 100644
+--- a/src/BUILD
++++ b/src/BUILD
+@@ -224,6 +224,9 @@ filegroup(
+         "//src/conditions:linux_aarch64": [
+             "@openjdk_linux_aarch64_vanilla//file",
+         ],
++        "//src/conditions:linux_ppc64le": [
++            "@openjdk_linux_ppc64le_vanilla//file",
++        ],
+         "//conditions:default": [
+             "@openjdk_linux_vanilla//file",
+         ],
+diff --git a/src/conditions/BUILD b/src/conditions/BUILD
+index 570401d..c817eb9 100644
+--- a/src/conditions/BUILD
++++ b/src/conditions/BUILD
+@@ -77,6 +77,12 @@ config_setting(
+ )
+ 
+ config_setting(
++    name = "linux_ppc64le",
++    values = {"cpu": "ppc"},
++    visibility = ["//visibility:public"],
++)
++
++config_setting(
+     name = "remote",
+     values = {"define": "EXECUTOR=remote"},
+     visibility = ["//visibility:public"],
+diff --git a/src/conditions/BUILD.tools b/src/conditions/BUILD.tools
+index 15707d2..ba95661 100644
+--- a/src/conditions/BUILD.tools
++++ b/src/conditions/BUILD.tools
+@@ -83,6 +83,12 @@ config_setting(
+ )
+ 
+ config_setting(
++    name = "linux_ppc64le",
++    values = {"cpu": "ppc"},
++    visibility = ["//visibility:public"],
++)
++
++config_setting(
+     name = "remote",
+     values = {"define": "EXECUTOR=remote"},
+     visibility = ["//visibility:public"],
+diff --git a/src/main/java/com/google/devtools/build/lib/bazel/rules/java/jdk.WORKSPACE b/src/main/java/com/google/devtools/build/lib/bazel/rules/java/jdk.WORKSPACE
+index 95f7f0b..ae59259 100644
+--- a/src/main/java/com/google/devtools/build/lib/bazel/rules/java/jdk.WORKSPACE
++++ b/src/main/java/com/google/devtools/build/lib/bazel/rules/java/jdk.WORKSPACE
+@@ -93,6 +93,15 @@ bind(
+ # Note that while these are currently the same as the openjdk_* rules in
+ # Bazel's WORKSPACE file, but they don't have to be the same.
+ 
++http_archive(
++    name = "remotejdk11_linux_ppc64le",
++    build_file = "@local_jdk//:BUILD.bazel",
++    strip_prefix = "jdk-11.0.2+9",
++    urls = [
++        "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_ppc64le_linux_hotspot_11.0.2_9.tar.gz",
++    ],
++)
++
+ # This must be kept in sync with the top-level WORKSPACE file.
+ maybe(
+     http_archive,
+diff --git a/src/minimize_jdk.sh b/src/minimize_jdk.sh
+index fb9186b..1b97120 100755
+--- a/src/minimize_jdk.sh
++++ b/src/minimize_jdk.sh
+@@ -30,6 +30,14 @@ else
+ fi
+ fulljdk=$1
+ out=$3
++ARCH=`uname -p`
++if [[ "${ARCH}" == 'ppc64le' ]]; then
++  FULL_JDK_DIR="jdk*"
++  DOCS=""
++else
++  FULL_JDK_DIR="zulu*"
++  DOCS="DISCLAIMER readme.txt"
++fi
+ 
+ UNAME=$(uname -s | tr 'A-Z' 'a-z')
+ 
+@@ -38,11 +46,11 @@ if [[ "$UNAME" =~ msys_nt* ]]; then
+   mkdir "tmp.$$"
+   cd "tmp.$$"
+   unzip "../$fulljdk"
+-  cd zulu*
++  cd $FULL_JDK_DIR
+   ./bin/jlink --module-path ./jmods/ --add-modules "$modules" \
+     --vm=server --strip-debug --no-man-pages \
+     --output reduced
+-  cp DISCLAIMER readme.txt legal/java.base/ASSEMBLY_EXCEPTION \
++  cp $DOCS legal/java.base/ASSEMBLY_EXCEPTION \
+     reduced/
+   # These are necessary for --host_jvm_debug to work.
+   cp bin/dt_socket.dll bin/jdwp.dll reduced/bin
+@@ -55,11 +63,11 @@ else
+   # to the owner stored in the archive - it will try to do that when running as
+   # root, but fail when running inside Docker, so we explicitly disable it.
+   tar xf "$fulljdk" --no-same-owner
+-  cd zulu*
++  cd $FULL_JDK_DIR 
+   ./bin/jlink --module-path ./jmods/ --add-modules "$modules" \
+     --vm=server --strip-debug --no-man-pages \
+     --output reduced
+-  cp DISCLAIMER readme.txt legal/java.base/ASSEMBLY_EXCEPTION \
++  cp $DOCS legal/java.base/ASSEMBLY_EXCEPTION \
+     reduced/
+   # These are necessary for --host_jvm_debug to work.
+   if [[ "$UNAME" =~ darwin ]]; then
+diff --git a/tools/jdk/BUILD b/tools/jdk/BUILD
+index cbcff60..8d8120a 100644
+--- a/tools/jdk/BUILD
++++ b/tools/jdk/BUILD
+@@ -498,6 +498,7 @@ alias(
+             "//src/conditions:windows": "@remotejdk11_win//:jdk",
+             "//src/conditions:linux_aarch64": "@remotejdk11_linux_aarch64//:jdk",
+             "//src/conditions:linux_x86_64": "@remotejdk11_linux//:jdk",
++            "//src/conditions:linux_ppc64le": "@remotejdk11_linux_ppc64le//:jdk",
+         },
+         no_match_error = "Could not find a JDK for host execution environment, please explicitly" +
+                          " provide one using `--host_javabase.`",
+-- 
+1.8.3.1
