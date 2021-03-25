@@ -1,5 +1,5 @@
-{% set sha256sum = "d7f40d0cac95a06cea6cb5b7f7769085257caebc3ee84269dd9298da760d5615" %}
-{% set version = "3.1.0" %}
+{% set sha256sum = "de255bb42163a915312df9f4b86e5b874b46d9e8d4b72604b5123c3a845ed9b1" %}
+{% set version = "3.7.2" %}
 package:
   name: bazel
   version: {{ version }}
@@ -8,7 +8,8 @@ source:
   url: https://github.com/bazelbuild/bazel/releases/download/{{ version }}/bazel-{{ version }}-dist.zip
   sha256: {{ sha256sum }}
   patches:
-    - 0006-Add-support-for-ppc64le-embedded-jdk.patch 
+    #- 0006-Add-support-for-ppc64le-embedded-jdk.patch
+    - 0001-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 
 build:
   number: 3
