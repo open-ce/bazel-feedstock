@@ -23,6 +23,7 @@ set -v -x
 # xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/lib_cc_configure.bzl#L25-L39
 export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
 export BAZEL_LINKLIBS="-l%:libstdc++.a"
+export EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk"
 
 #Use the Java8 CDT
 if [[ ${target_platform} =~ .*ppc.* ]]; then
