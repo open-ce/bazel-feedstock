@@ -11,7 +11,7 @@ source:
     - 0006-Add-support-for-ppc64le-embedded-jdk.patch 
 
 build:
-  number: 3
+  number: 4
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
 
@@ -19,11 +19,17 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    # Use pins to control cos6/cos7 match
+    - libgcc-ng  {{ libgcc }}
+    - libstdcxx-ng  {{ libstdcxx }}
     - patch  # [unix]
     - {{ cdt('java-1.8.0-openjdk-devel') }}  # [linux]
     - {{ cdt('zip') }}  # [linux]
   host:
     - unzip
+    # Use pins to control cos6/cos7 match
+    - libgcc-ng  {{ libgcc }}
+    - libstdcxx-ng  {{ libstdcxx }}
 
   run:
     - posix  # [win]
