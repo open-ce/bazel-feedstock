@@ -38,6 +38,10 @@ test:
   requires:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    # Use pins to control cos6/cos7 match
+    - libgcc-ng  {{ libgcc }}
+    - libstdcxx-ng  {{ libstdcxx }}
+
   commands:
     - bazel -h
     - readelf -d $PREFIX/bin/bazel  # [linux]
