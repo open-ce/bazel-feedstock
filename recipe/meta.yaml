@@ -15,6 +15,10 @@ build:
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
 
+ignore_run_exports:
+  - libgcc-ng
+  - libstdcxx-ng
+
 requirements:
   build:
     - {{ compiler('c') }}
@@ -33,14 +37,14 @@ requirements:
 
   run:
     - posix  # [win]
+    # Use pins to control cos6/cos7 match
+    - libgcc-ng  {{ libgcc }}
+    - libstdcxx-ng  {{ libstdcxx }}
 
 test:
   requires:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    # Use pins to control cos6/cos7 match
-    - libgcc-ng  {{ libgcc }}
-    - libstdcxx-ng  {{ libstdcxx }}
 
   commands:
     - bazel -h
