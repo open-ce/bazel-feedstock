@@ -14,12 +14,9 @@ source:
     - 0301-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 
 build:
-  number: 1
+  number: 2
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
-  ignore_run_exports:
-    - libgcc-ng
-    - libstdcxx-ng
 
 requirements:
   build:
@@ -39,9 +36,6 @@ requirements:
 
   run:
     - posix  # [win]
-    # Use pins to control cos6/cos7 match
-    - libgcc-ng  {{ libgcc }}
-    - libstdcxx-ng  {{ libstdcxx }}
 
 test:
   requires:
