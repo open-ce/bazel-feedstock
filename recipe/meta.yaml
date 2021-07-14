@@ -11,12 +11,9 @@ source:
     - 0006-Add-support-for-ppc64le-embedded-jdk.patch 
 
 build:
-  number: 4
+  number: 5
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
-  ignore_run_exports:
-    - libgcc-ng
-    - libstdcxx-ng
 
 requirements:
   build:
@@ -36,9 +33,6 @@ requirements:
 
   run:
     - posix  # [win]
-    # Use pins to control cos6/cos7 match
-    - libgcc-ng  {{ libgcc }}
-    - libstdcxx-ng  {{ libstdcxx }}
 
 test:
   requires:
