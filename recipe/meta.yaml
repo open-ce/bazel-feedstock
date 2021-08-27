@@ -14,7 +14,7 @@ source:
     - 0301-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 
 build:
-  number: 2
+  number: 3
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
 
@@ -22,17 +22,11 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    # Use pins to control cos6/cos7 match
-    - libgcc-ng  {{ libgcc }}
-    - libstdcxx-ng  {{ libstdcxx }}
     - patch  # [unix]
     - {{ cdt('java-1.8.0-openjdk-devel') }}  # [linux]
     - {{ cdt('zip') }}  # [linux]
   host:
     - unzip
-    # Use pins to control cos6/cos7 match
-    - libgcc-ng  {{ libgcc }}
-    - libstdcxx-ng  {{ libstdcxx }}
 
   run:
     - posix  # [win]
