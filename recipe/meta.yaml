@@ -22,11 +22,17 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    # Use pins to control cos6/cos7 match
+    - libgcc-ng  {{ libgcc }}                      # [x86_64 and c_compiler_version == "7.2.*"]
+    - libstdcxx-ng  {{ libstdcxx }}                # [x86_64 and c_compiler_version == "7.2.*"]
     - patch  # [unix]
     - {{ cdt('java-1.8.0-openjdk-devel') }}  # [linux]
     - {{ cdt('zip') }}  # [linux]
   host:
     - unzip
+    # Use pins to control cos6/cos7 match
+    - libgcc-ng  {{ libgcc }}                      # [x86_64 and c_compiler_version == "7.2.*"]
+    - libstdcxx-ng  {{ libstdcxx }}                # [x86_64 and c_compiler_version == "7.2.*"]
 
   run:
     - posix  # [win]
