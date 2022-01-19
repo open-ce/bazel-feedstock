@@ -14,14 +14,14 @@ source:
     - 0301-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 
 build:
-  number: 3
+  number: 4
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
 
 requirements:
   build:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
+    - {{ compiler('c') }}       # [ ppc_arch != "p10"]
+    - {{ compiler('cxx') }}     # [ ppc_arch != "p10"]
     # Use pins to control cos6/cos7 match
     - libgcc-ng  {{ libgcc }}                      # [x86_64 and c_compiler_version == "7.2.*"]
     - libstdcxx-ng  {{ libstdcxx }}                # [x86_64 and c_compiler_version == "7.2.*"]
@@ -38,9 +38,9 @@ requirements:
     - posix  # [win]
 
 test:
-  requires:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
+  requires:                 # [ ppc_arch != "p10"]
+    - {{ compiler('c') }}   # [ ppc_arch != "p10"]
+    - {{ compiler('cxx') }} # [ ppc_arch != "p10"]
 
   commands:
     - bazel -h
