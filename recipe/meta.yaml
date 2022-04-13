@@ -1,5 +1,5 @@
-{% set sha256sum = "de255bb42163a915312df9f4b86e5b874b46d9e8d4b72604b5123c3a845ed9b1" %}
-{% set version = "3.7.2" %}
+{% set sha256sum = "12ea7aa11e2bdb12de1dceb9939a22e96f5a480437cb17c123379d8e0fdf5e82" %}
+{% set version = "4.2.1" %}
 package:
   name: bazel
   version: {{ version }}
@@ -10,11 +10,9 @@ source:
   patches:
     # 01xx - patch is specific to open-ce and will always be carried forward and not upstreamed
     - 0101-Add-support-for-ppc64le-embedded-jdk.patch
-    # 03xx - patch temporary to fix a problem that when fixed upstream can be removed
-    - 0301-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 
 build:
-  number: 4
+  number: 1
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
 
