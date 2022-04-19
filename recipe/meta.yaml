@@ -10,6 +10,8 @@ source:
   patches:
     # 01xx - patch is specific to open-ce and will always be carried forward and not upstreamed
     - 0101-Add-support-for-ppc64le-embedded-jdk.patch
+    - 0102-Fixed-Java-heap-OOM-s390x.patch                            # [s390x]
+    - 0103-Fixed-ByteOrder-md5digest-state-value-s390x.patch          # [s390x]
     # 03xx - patch temporary to fix a problem that when fixed upstream can be removed
     - 0301-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 

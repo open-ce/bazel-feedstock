@@ -1,0 +1,27 @@
+diff --git a/scripts/bootstrap/compile.sh b/scripts/bootstrap/compile.sh
+index 9e128df..02548f6 100755
+--- a/scripts/bootstrap/compile.sh
++++ b/scripts/bootstrap/compile.sh
+@@ -144,7 +144,7 @@ function java_compilation() {
+   # Useful if your system chooses too small of a max heap for javac.
+   # We intentionally rely on shell word splitting to allow multiple
+   # additional arguments to be passed to javac.
+-  run "${JAVAC}" -classpath "${classpath}" -sourcepath "${sourcepath}" \
++  run "${JAVAC}" -J-Xms2g -J-Xmx2g -classpath "${classpath}" -sourcepath "${sourcepath}" \
+       -d "${output}/classes" -source "$JAVA_VERSION" -target "$JAVA_VERSION" \
+       -encoding UTF-8 ${BAZEL_JAVAC_OPTS} "@${paramfile}"
+ 
+diff --git a/tools/build_rules/java_rules_skylark.bzl b/tools/build_rules/java_rules_skylark.bzl
+index 64bad95..c57e013 100755
+--- a/tools/build_rules/java_rules_skylark.bzl
++++ b/tools/build_rules/java_rules_skylark.bzl
+@@ -69,7 +69,7 @@ def _java_library_impl(ctx):
+         cmd += "%s/bin/javac" % java_runtime.java_home
+         cmd += " " + " ".join(javac_options)
+         if compile_time_jars:
+-            cmd += " -classpath '" + cmd_helper.join_paths(ctx.configuration.host_path_separator, compile_time_jars) + "'"
++            cmd += " -J-Xms2g -J-Xmx2g -classpath '" + cmd_helper.join_paths(ctx.configuration.host_path_separator, compile_time_jars) + "'"
+         cmd += " -d " + build_output + files + "\n"
+ 
+     # We haven't got a good story for where these should end up, so
+
