@@ -25,18 +25,29 @@ export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
 export BAZEL_LINKLIBS="-l%:libstdc++.a"
 export EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk"
 
+if [[ $ppc_arch == "p10" ]]
+then
+    if [[ -z "${GCC_11_HOME}" ]];
+    then
+        echo "Please set GCC_11_HOME to the install path of gcc-toolset-11"
+        exit 1
+    fi
+fi
+
 #Use the Java8 CDT
 if [[ ${target_platform} =~ .*ppc.* ]]; then
   SYSROOT_DIR="${BUILD_PREFIX}"/powerpc64le-conda_cos7-linux-gnu/sysroot/usr/
 elif [[ ${target_platform} =~ .*x86_64.* || ${target_platform} =~ .*linux-64.* ]]; then
   SYSROOT_DIR="${BUILD_PREFIX}"/x86_64-conda_cos6-linux-gnu/sysroot/usr/
 fi
-jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-1.8.0-openjdk-*")
+
+jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-11-openjdk-*")
 export JAVA_HOME=${jvm_slug}
 
 #Use the zip CDT
 zip_slug="${SYSROOT_DIR}"/bin
 export PATH=$PATH:${zip_slug}
+export PATH=$PATH:$JAVA_HOME/bin
 
 bash compile.sh
 mkdir -p $PREFIX/bin
