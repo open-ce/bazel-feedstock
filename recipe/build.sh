@@ -18,11 +18,6 @@ set -v -x
 
 # useful for debugging:
 #export BAZEL_BUILD_OPTS="--logging=6 --subcommands --verbose_failures"
-#Linux - set flags for statically linking libstdc++
-# xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/unix_cc_configure.bzl#L257-L258
-# xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/lib_cc_configure.bzl#L25-L39
-export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
-export BAZEL_LINKLIBS="-l%:libstdc++.a"
 export EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk"
 
 if [[ $ppc_arch == "p10" ]]
@@ -34,21 +29,27 @@ then
     fi
 fi
 
-#Use the Java8 CDT
+#Use the Java11 CDT for PPC builds and Anaconda's openjdk 11 on x86
+
 if [[ ${target_platform} =~ .*ppc.* ]]; then
   SYSROOT_DIR="${BUILD_PREFIX}"/powerpc64le-conda_cos7-linux-gnu/sysroot/usr/
+  #Linux - set flags for statically linking libstdc++
+  # xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/unix_cc_configure.bzl#L257-L258
+  # xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/lib_cc_configure.bzl#L25-L39
+  export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
+  export BAZEL_LINKLIBS="-l%:libstdc++.a"
+  jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-11-openjdk-*")
+  export JAVA_HOME=${jvm_slug}
+
+  #Use the zip CDT
+  zip_slug="${SYSROOT_DIR}"/bin
+  export PATH=$PATH:${zip_slug}
+
 elif [[ ${target_platform} =~ .*x86_64.* || ${target_platform} =~ .*linux-64.* ]]; then
-  SYSROOT_DIR="${BUILD_PREFIX}"/x86_64-conda_cos6-linux-gnu/sysroot/usr/
+  export JAVA_HOME=$BUILD_PREFIX
 fi
 
-jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-11-openjdk-*")
-export JAVA_HOME=${jvm_slug}
-
-#Use the zip CDT
-zip_slug="${SYSROOT_DIR}"/bin
-export PATH=$PATH:${zip_slug}
 export PATH=$PATH:$JAVA_HOME/bin
-
 bash compile.sh
 mkdir -p $PREFIX/bin
 mv output/bazel $PREFIX/bin

@@ -23,7 +23,8 @@ requirements:
     - {{ compiler('c') }}       # [ ppc_arch != "p10"]
     - {{ compiler('cxx') }}     # [ ppc_arch != "p10"]
     - patch  # [unix]
-    - {{ cdt('java-11-openjdk-devel') }}  # [linux]
+    - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le]
+    - openjdk {{ openjdk }}               # [x86_64]
     - {{ cdt('zip') }}  # [linux]
   host:
     - unzip
