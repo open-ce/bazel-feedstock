@@ -25,7 +25,7 @@ requirements:
     - patch  # [unix]
     - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le]
     - openjdk {{ openjdk }}               # [x86_64]
-    - {{ cdt('zip') }}  # [linux]
+    - zip
   host:
     - unzip
 
