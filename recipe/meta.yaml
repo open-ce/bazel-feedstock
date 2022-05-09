@@ -25,7 +25,8 @@ requirements:
     - patch  # [unix]
     - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le]
     - openjdk {{ openjdk }}               # [x86_64]
-    - zip
+    - zip               # [not s390x]
+    - {{ cdt('zip') }}  # [s390x]
   host:
     - unzip
 
