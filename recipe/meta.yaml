@@ -1,5 +1,5 @@
-{% set sha256sum = "12ea7aa11e2bdb12de1dceb9939a22e96f5a480437cb17c123379d8e0fdf5e82" %}
-{% set version = "4.2.1" %}
+{% set sha256sum = "072dd62d237dbc11e0bac02e118d8c2db4d0ba3ba09f1a0eb1e2a460fb8419db" %}
+{% set version = "5.0.0" %}
 package:
   name: bazel
   version: {{ version }}
@@ -15,22 +15,20 @@ build:
   number: 1
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
+  script_env:                 #[ppc_arch == 'p10']
+    - GCC_11_HOME             #[ppc_arch == 'p10']
 
 requirements:
   build:
     - {{ compiler('c') }}       # [ ppc_arch != "p10"]
     - {{ compiler('cxx') }}     # [ ppc_arch != "p10"]
-    # Use pins to control cos6/cos7 match
-    - libgcc-ng  {{ libgcc }}                      # [x86_64 and c_compiler_version == "7.2.*"]
-    - libstdcxx-ng  {{ libstdcxx }}                # [x86_64 and c_compiler_version == "7.2.*"]
     - patch  # [unix]
-    - {{ cdt('java-1.8.0-openjdk-devel') }}  # [linux]
-    - {{ cdt('zip') }}  # [linux]
+    - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le]
+    - openjdk {{ openjdk }}               # [x86_64]
+    - zip               # [not s390x]
+    - {{ cdt('zip') }}  # [s390x]
   host:
     - unzip
-    # Use pins to control cos6/cos7 match
-    - libgcc-ng  {{ libgcc }}                      # [x86_64 and c_compiler_version == "7.2.*"]
-    - libstdcxx-ng  {{ libstdcxx }}                # [x86_64 and c_compiler_version == "7.2.*"]
 
   run:
     - posix  # [win]
