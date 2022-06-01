@@ -15,13 +15,11 @@ build:
   number: 1
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
-  script_env:                 #[ppc_arch == 'p10']
-    - GCC_11_HOME             #[ppc_arch == 'p10']
 
 requirements:
   build:
-    - {{ compiler('c') }}       # [ ppc_arch != "p10"]
-    - {{ compiler('cxx') }}     # [ ppc_arch != "p10"]
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
     - patch  # [unix]
     - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le]
     - openjdk {{ openjdk }}               # [x86_64]
@@ -34,9 +32,9 @@ requirements:
     - posix  # [win]
 
 test:
-  requires:                 # [ ppc_arch != "p10"]
-    - {{ compiler('c') }}   # [ ppc_arch != "p10"]
-    - {{ compiler('cxx') }} # [ ppc_arch != "p10"]
+  requires:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
 
   commands:
     - bazel -h

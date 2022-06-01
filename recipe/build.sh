@@ -20,15 +20,6 @@ set -v -x
 #export BAZEL_BUILD_OPTS="--logging=6 --subcommands --verbose_failures"
 export EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk"
 
-if [[ $ppc_arch == "p10" ]]
-then
-    if [[ -z "${GCC_11_HOME}" ]];
-    then
-        echo "Please set GCC_11_HOME to the install path of gcc-toolset-11"
-        exit 1
-    fi
-fi
-
 #Use the Java11 CDT for PPC builds and Anaconda's openjdk 11 on x86
 
 if [[ ${target_platform} =~ .*ppc.* ]]; then
