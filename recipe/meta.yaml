@@ -12,7 +12,7 @@ source:
     - 0101-Add-support-for-ppc64le-embedded-jdk.patch
 
 build:
-  number: 1
+  number: 2
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
 
