@@ -20,24 +20,17 @@ set -v -x
 #export BAZEL_BUILD_OPTS="--logging=6 --subcommands --verbose_failures"
 export EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk"
 
-if [[ $ppc_arch == "p10" ]]
-then
-    if [[ -z "${GCC_11_HOME}" ]];
-    then
-        echo "Please set GCC_11_HOME to the install path of gcc-toolset-11"
-        exit 1
-    fi
-fi
+#Linux - set flags for statically linking libstdc++
+# xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/unix_cc_configure.bzl#L257-L258
+# xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/lib_cc_configure.bzl#L25-L39
+
+export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
+export BAZEL_LINKLIBS="-l%:libstdc++.a"
 
 #Use the Java11 CDT for PPC builds and Anaconda's openjdk 11 on x86
 
 if [[ ${target_platform} =~ .*ppc.* ]]; then
   SYSROOT_DIR="${BUILD_PREFIX}"/powerpc64le-conda_cos7-linux-gnu/sysroot/usr/
-  #Linux - set flags for statically linking libstdc++
-  # xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/unix_cc_configure.bzl#L257-L258
-  # xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/lib_cc_configure.bzl#L25-L39
-  export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
-  export BAZEL_LINKLIBS="-l%:libstdc++.a"
   jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-11-openjdk-*")
   export JAVA_HOME=${jvm_slug}
 
