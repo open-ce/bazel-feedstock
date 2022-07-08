@@ -25,7 +25,7 @@ export EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk"
 # xref: https://github.com/bazelbuild/bazel/blob/0.12.0/tools/cpp/lib_cc_configure.bzl#L25-L39
 
 export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
-export BAZEL_LINKLIBS="-l%:libstdc++.a"
+export BAZEL_LINKLIBS="-l%:libstdc++.a:-lm"
 
 #Use the Java11 CDT for PPC builds and Anaconda's openjdk 11 on x86
 
