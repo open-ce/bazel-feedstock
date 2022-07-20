@@ -12,8 +12,6 @@ source:
     - 0101-Add-support-for-ppc64le-embedded-jdk.patch
     - 0102-Fixed-Java-heap-OOM-s390x.patch                            # [s390x]
     - 0103-Fixed-ByteOrder-md5digest-state-value-s390x.patch          # [s390x]
-    # 03xx - patch temporary to fix a problem that when fixed upstream can be removed
-    - 0301-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 
 build:
   number: 1
@@ -26,6 +24,7 @@ requirements:
   build:
     - {{ compiler('c') }}     # [ ppc_arch != "p10"]
     - {{ compiler('cxx') }}   # [ ppc_arch != "p10"]
+    - binutils                # [ s390x ]
     - patch  # [unix]
     - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le or s390x]
     - openjdk {{ openjdk }}               # [x86_64]
