@@ -1,5 +1,5 @@
-{% set sha256sum = "072dd62d237dbc11e0bac02e118d8c2db4d0ba3ba09f1a0eb1e2a460fb8419db" %}
-{% set version = "5.0.0" %}
+{% set sha256sum = "7f5d3bc1d344692b2400f3765fd4b5c0b636eb4e7a8a7b17923095c7b56a4f78" %}
+{% set version = "5.1.1" %}
 package:
   name: bazel
   version: {{ version }}
@@ -10,18 +10,23 @@ source:
   patches:
     # 01xx - patch is specific to open-ce and will always be carried forward and not upstreamed
     - 0101-Add-support-for-ppc64le-embedded-jdk.patch
+    - 0102-Fixed-Java-heap-OOM-s390x.patch                            # [s390x]
+    - 0103-Fixed-ByteOrder-md5digest-state-value-s390x.patch          # [s390x]
 
 build:
-  number: 3
+  number: 1
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
+  script_env:                 #[ppc_arch == 'p10']
+    - GCC_11_HOME             #[ppc_arch == 'p10']
 
 requirements:
   build:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
+    - {{ compiler('c') }}     # [ ppc_arch != "p10"]
+    - {{ compiler('cxx') }}   # [ ppc_arch != "p10"]
+    - binutils                # [ s390x ]
     - patch  # [unix]
-    - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le]
+    - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le or s390x]
     - openjdk {{ openjdk }}               # [x86_64]
     - zip               # [not s390x]
     - {{ cdt('zip') }}  # [s390x]
@@ -33,8 +38,8 @@ requirements:
 
 test:
   requires:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
+    - {{ compiler('c') }}     # [ ppc_arch != "p10"]
+    - {{ compiler('cxx') }}   # [ ppc_arch != "p10"]
 
   commands:
     - bazel -h
