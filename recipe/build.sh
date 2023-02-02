@@ -71,8 +71,8 @@ cp -r ${RECIPE_DIR}/tutorial .
 cd tutorial
 bazel build "${BAZEL_BUILD_OPTS[@]}" //main:hello-world
 bazel info | grep "java-home.*embedded_tools"
-bazel shutdown
-bazel clean --expunge
+#bazel shutdown
+#bazel clean --expunge
 
 
 if [[ ${HOST} =~ .*linux.* ]]; then
