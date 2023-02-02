@@ -73,10 +73,14 @@ bazel build "${BAZEL_BUILD_OPTS[@]}" //main:hello-world
 bazel info | grep "java-home.*embedded_tools"
 PID=$(bazel info server_pid)
 echo "PID: $PID"
-sleep 10
+sleep 100
+ls -ltrh /proc | grep $PID
+
 bazel clean --expunge
 bazel shutdown
 
+
+sleep 6000
 
 if [[ ${HOST} =~ .*linux.* ]]; then
     # libstdc++ should not be included in this listing as it is statically linked
