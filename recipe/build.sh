@@ -73,9 +73,9 @@ bazel build "${BAZEL_BUILD_OPTS[@]}" //main:hello-world
 bazel info | grep "java-home.*embedded_tools"
 PID=$(bazel info server_pid)
 echo "PID: $PID"
-sleep 10
-bazel clean --expunge
-bazel shutdown
+#sleep 80
+#bazel clean --expunge
+#bazel shutdown
 
 
 if [[ ${HOST} =~ .*linux.* ]]; then
