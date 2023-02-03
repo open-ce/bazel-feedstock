@@ -75,6 +75,7 @@ bazel build "${BAZEL_BUILD_OPTS[@]}" //main:hello-world
 #echo "PID: $PID1"
 
 bazel info | grep "java-home.*embedded_tools"
+
 PID2=$(bazel info server_pid)
 echo "PID: $PID2"
 
@@ -83,7 +84,6 @@ sleep 100
 
 bazel clean --expunge
 bazel shutdown
-
 
 #sleep 6000
 
