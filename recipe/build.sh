@@ -1,6 +1,6 @@
 #!/bin/bash
 # *****************************************************************
-# (C) Copyright IBM Corp. 2018, 2022. All Rights Reserved.
+# (C) Copyright IBM Corp. 2018, 2023. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 # limitations under the License.
 # *****************************************************************
 set -v -x
+source open-ce-common-utils.sh
 
 # useful for debugging:
 #export BAZEL_BUILD_OPTS="--logging=6 --subcommands --verbose_failures"
@@ -71,21 +72,13 @@ cp -r ${RECIPE_DIR}/tutorial .
 cd tutorial
 
 bazel build "${BAZEL_BUILD_OPTS[@]}" //main:hello-world
-#PID1=$(bazel build server_pid)
-#echo "PID: $PID1"
 
 bazel info | grep "java-home.*embedded_tools"
 
-PID2=$(bazel info server_pid)
-echo "PID: $PID2"
+PID=$(bazel info server_pid)
+echo "PID: $PID"
 
-sleep 100
-#ls -ltrh /proc | grep $PID
-
-bazel clean --expunge
-bazel shutdown
-
-#sleep 6000
+cleanup_bazel $PID
 
 if [[ ${HOST} =~ .*linux.* ]]; then
     # libstdc++ should not be included in this listing as it is statically linked
