@@ -15,6 +15,7 @@
 # limitations under the License.
 # *****************************************************************
 set -v -x
+source open-ce-common-utils.sh
 
 # useful for debugging:
 #export BAZEL_BUILD_OPTS="--logging=6 --subcommands --verbose_failures"
@@ -71,8 +72,11 @@ cp -r ${RECIPE_DIR}/tutorial .
 cd tutorial
 bazel build "${BAZEL_BUILD_OPTS[@]}" //main:hello-world
 bazel info | grep "java-home.*embedded_tools"
-bazel shutdown
-bazel clean --expunge
+
+PID=$(bazel info server_pid)
+echo "PID: $PID"
+
+cleanup_bazel $PID
 
 
 if [[ ${HOST} =~ .*linux.* ]]; then
