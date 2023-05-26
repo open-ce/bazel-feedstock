@@ -17,6 +17,20 @@
 set -v -x
 source open-ce-common-utils.sh
 
+if [[ $ppc_arch == "p10" ]]
+then
+    if [[ -z "${GCC_10_HOME}" ]];
+    then
+        echo "Please set GCC_10_HOME to the install path of gcc-toolset-10"
+        exit 1
+    else
+        export PATH=${GCC_10_HOME}/bin/:$PATH
+    fi
+
+    GCC_USED=`which gcc`
+    echo "GCC being used is ${GCC_USED}"
+fi
+
 # useful for debugging:
 #export BAZEL_BUILD_OPTS="--logging=6 --subcommands --verbose_failures"
 #Linux - set flags for statically linking libstdc++
