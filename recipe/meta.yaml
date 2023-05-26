@@ -16,9 +16,11 @@ source:
     - 0301-Fixed-build-Patch-from-https-github.com-bazelbuild-b.patch
 
 build:
-  number: 4
+  number: 5
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
+  script_env:                 #[ppc_arch == 'p10']
+    - GCC_10_HOME             #[ppc_arch == 'p10']
 
 requirements:
   build:
