@@ -1,5 +1,5 @@
-{% set sha256sum = "ee801491ff0ec3a562422322a033c9afe8809b64199e4a94c7433d4e14e6b921" %}
-{% set version = "5.3.0" %}
+{% set sha256sum = "bd88ff602c8bbb29ee82ba2a6b12ad092d51ec668c6577f9628f18e48ff4e51e" %}
+{% set version = "6.4.0" %}
 
 package:
   name: bazel
