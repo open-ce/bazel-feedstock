@@ -19,7 +19,7 @@ build:
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
   script_env:                 #[ppc_arch == 'p10']
-    - GCC_11_HOME             #[ppc_arch == 'p10']
+    - GCC_HOME             #[ppc_arch == 'p10']
 
 requirements:
   build:
