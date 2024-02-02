@@ -23,9 +23,9 @@ export EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk"
 
 if [[ $ppc_arch == "p10" ]]
 then
-    if [[ -z "${GCC_HOME}" ]];
+    if [[ -z "${GCC_11_HOME}" ]];
     then
-        echo "Please set GCC_HOME to the install path of gcc-toolset-12"
+        echo "Please set GCC_11_HOME to the install path of gcc-toolset-11"
         exit 1
     fi
 fi

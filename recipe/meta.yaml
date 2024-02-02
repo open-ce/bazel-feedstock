@@ -15,11 +15,11 @@ source:
     - 0103-Fixed-ByteOrder-md5digest-state-value-s390x.patch          # [s390x]
 
 build:
-  number: 2
+  number: 1
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
   script_env:                 #[ppc_arch == 'p10']
-    - GCC_HOME             #[ppc_arch == 'p10']
+    - GCC_11_HOME             #[ppc_arch == 'p10']
 
 requirements:
   build:
