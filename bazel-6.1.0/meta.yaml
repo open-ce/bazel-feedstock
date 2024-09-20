@@ -1,5 +1,5 @@
-{% set sha256sum = "ee801491ff0ec3a562422322a033c9afe8809b64199e4a94c7433d4e14e6b921" %}
-{% set version = "5.3.0" %}
+{% set sha256sum = "c4b85675541cf66ee7cb71514097fdd6c5fc0e02527243617a4f20ca6b4f2932" %}
+{% set version = "6.1.0" %}
 
 package:
   name: bazel
@@ -15,11 +15,11 @@ source:
     - 0103-Fixed-ByteOrder-md5digest-state-value-s390x.patch          # [s390x]
 
 build:
-  number: 1
+  number: 2
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
   script_env:                 #[ppc_arch == 'p10']
-    - GCC_11_HOME             #[ppc_arch == 'p10']
+    - GCC_HOME             #[ppc_arch == 'p10']
 
 requirements:
   build:
