@@ -1,0 +1,6 @@
+recipes:
+  - name : bazel-6.1.0
+    path : bazel-6.1.0
+  
+  - name : bazel-6.5.0
+    path : bazel-6.5.0

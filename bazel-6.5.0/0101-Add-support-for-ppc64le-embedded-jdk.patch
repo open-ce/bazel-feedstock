@@ -1,0 +1,32 @@
+From cb4bae599daed39971b8fa22fcd4698255031a88 Mon Sep 17 00:00:00 2001
+From: Nishidha Panpaliya <npanpa23@in.ibm.com>
+Date: Fri, 29 May 2020 12:06:21 +0000
+Subject: [PATCH] Add support for ppc64le embedded jdk
+
+---
+ compile.sh                                               |  6 ++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/compile.sh b/compile.sh
+index d91583d..e84a80b 100755
+--- a/compile.sh
++++ b/compile.sh
+@@ -63,12 +63,14 @@ display "."
+ log "Building output/bazel"
+ # We set host and target platform directly because we are building for the local
+ # host.
+-bazel_build "src:bazel_nojdk${EXE_EXT}" \
++bazel_build ${BAZEL_BUILD_OPTS} "src:bazel_dev_jdk${EXE_EXT}" \
+   --action_env=PATH \
++  --distinct_host_configuration=false \
++  --javabase=@bazel_tools//tools/jdk:jdk \
+   --host_platform=@local_config_platform//:host \
+   --platforms=@local_config_platform//:host \
+   || fail "Could not build Bazel"
+-bazel_bin_path="$(get_bazel_bin_path)/src/bazel_nojdk${EXE_EXT}"
++bazel_bin_path="$(get_bazel_bin_path)/src/bazel_dev_jdk${EXE_EXT}"
+ [ -e "$bazel_bin_path" ] \
+   || fail "Could not find freshly built Bazel binary at '$bazel_bin_path'"
+ cp -f "$bazel_bin_path" "output/bazel${EXE_EXT}" \
+-- 
+1.8.3.1
