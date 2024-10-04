@@ -1,0 +1,69 @@
+{% set sha256sum = "fc89da919415289f29e4ff18a5e01270ece9a6fe83cb60967218bac4a3bb3ed2" %}
+{% set version = "6.5.0" %}
+
+package:
+  name: bazel
+  version: {{ version }}
+
+source:
+  url: https://github.com/bazelbuild/bazel/releases/download/{{ version }}/bazel-{{ version }}-dist.zip
+  sha256: {{ sha256sum }}
+  patches:
+    # 01xx - patch is specific to open-ce and will always be carried forward and not upstreamed
+    - 0101-Add-support-for-ppc64le-embedded-jdk.patch
+    - 0102-Fixed-Java-heap-OOM-s390x.patch                            # [s390x]
+    - 0103-Fixed-ByteOrder-md5digest-state-value-s390x.patch          # [s390x]
+
+build:
+  number: 1 
+  ignore_prefix_files: True
+  binary_relocation: False  # [osx]
+  script_env:                 #[ppc_arch == 'p10']
+    - GCC_HOME             #[ppc_arch == 'p10']
+
+requirements:
+  build:
+    - {{ compiler('c') }}     # [ ppc_arch != "p10"]
+    - {{ compiler('cxx') }}   # [ ppc_arch != "p10"]
+    - binutils                # [ s390x ]
+    - patch  # [unix]
+    - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le or s390x]
+    - openjdk {{ openjdk }}               # [x86_64]
+    - zip               # [not s390x]
+    - {{ cdt('zip') }}  # [s390x]
+  host:
+    - unzip
+
+  run:
+    - posix  # [win]
+    - binutils    #[s390x]
+
+test:
+  requires:
+    - {{ compiler('c') }}     # [ ppc_arch != "p10"]
+    - {{ compiler('cxx') }}   # [ ppc_arch != "p10"]
+
+  commands:
+    - bazel -h
+    - readelf -d $PREFIX/bin/bazel  # [linux]
+    # manually check that -lstdc++ appears in the bundled unix_cc_configure.bzl
+    # tar xf /path/to/pkgs/bazel-0.5.4-hf484d3e_0.tar.bz2 bin/bazel
+    # unzip -p bin/bazel embedded_tools/tools/cpp/unix_cc_configure.bzl | grep stdc++
+
+about:
+  home: https://www.bazel.io/
+  summary: build system originally authored by Google
+  description: |
+    Bazel is Google's own build tool, now publicly available in Beta. Bazel has
+    built-in support for building both client and server software, including
+    client applications for both Android and iOS platforms. It also provides an
+    extensible framework that you can use to develop your own build rules.
+  dev_url: https://github.com/bazelbuild/bazel
+  doc_url: https://www.bazel.io/versions/master/docs/install.html
+  license: Apache 2.0
+  license_family: Apache
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - open-ce/open-ce-dev-team   
