@@ -27,8 +27,8 @@ requirements:
     - {{ compiler('cxx') }}   # [ ppc_arch != "p10"]
     - binutils                # [ s390x ]
     - patch  # [unix]
-    - {{ cdt('java-11-openjdk-devel') }}  # [ppc64le or s390x]
-    - openjdk {{ openjdk }}               # [x86_64]
+    - {{ cdt('java-11-openjdk-devel') }}  # [s390x]
+    - openjdk {{ openjdk }}               # [x86_64 or ppc64le]
     - zip               # [not s390x]
     - {{ cdt('zip') }}  # [s390x]
   host:
