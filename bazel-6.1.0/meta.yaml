@@ -15,7 +15,7 @@ source:
     - 0103-Fixed-ByteOrder-md5digest-state-value-s390x.patch          # [s390x]
 
 build:
-  number: 2
+  number: 3
   ignore_prefix_files: True
   binary_relocation: False  # [osx]
   script_env:                 #[ppc_arch == 'p10']
@@ -30,7 +30,6 @@ requirements:
     - {{ cdt('java-11-openjdk-devel') }}  # [s390x]
     - openjdk {{ openjdk }}               # [x86_64 or ppc64le]
     - zip               # [not s390x]
-    - {{ cdt('zip') }}  # [s390x]
   host:
     - unzip
 

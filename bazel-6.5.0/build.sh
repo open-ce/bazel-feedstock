@@ -37,32 +37,10 @@ fi
 export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
 export BAZEL_LINKLIBS="-l%:libstdc++.a:-lm"
 
-#Use the Java11 CDT for PPC builds and Anaconda's openjdk 11 on x86
+# Use the system-installed JDK (from RHEL)
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+export PATH=$JAVA_HOME/bin:$PATH
 
-if [[ ${target_platform} =~ .*ppc.* ]]; then
-  SYSROOT_DIR="${BUILD_PREFIX}"/powerpc64le-conda_cos7-linux-gnu/sysroot/usr/
-  jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-11-openjdk-*")
-  export JAVA_HOME=${jvm_slug}
-
-  #Use the zip CDT
-  zip_slug="${SYSROOT_DIR}"/bin
-  export PATH=$PATH:${zip_slug}
-
-elif [[ ${target_platform} =~ .*x86_64.* || ${target_platform} =~ .*linux-64.* ]]; then
-  export JAVA_HOME=$BUILD_PREFIX
-  SYSROOT_DIR="${BUILD_PREFIX}"/x86_64-conda_cos6-linux-gnu/sysroot/usr/
-elif [[ ${target_platform} =~ .*s390x.* ]]; then
-  SYSROOT_DIR="${BUILD_PREFIX}"/s390x-conda_cos7-linux-gnu/sysroot/usr/
-  jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-11-openjdk-*")
-  export JAVA_HOME=${jvm_slug}
-
-  #Use the zip CDT
-  zip_slug="${SYSROOT_DIR}"/bin
-  export PATH=$PATH:${zip_slug}
-
-fi
-
-export PATH=$PATH:$JAVA_HOME/bin
 bash compile.sh
 mkdir -p $PREFIX/bin
 mv output/bazel $PREFIX/bin
