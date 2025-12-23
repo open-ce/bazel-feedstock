@@ -37,9 +37,31 @@ fi
 export BAZEL_LINKOPTS="-static-libstdc++ -static-libgcc"
 export BAZEL_LINKLIBS="-l%:libstdc++.a:-lm"
 
+# Use the system-installed JDK (from RHEL or compatible)
+
+#export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+#export PATH=$JAVA_HOME/bin:$PATH
+
+if [[ ${target_platform} =~ .*s390x.* ]]; then
+    SYSROOT_DIR="${BUILD_PREFIX}"/s390x-conda_cos7-linux-gnu/sysroot/usr/
+    jvm_slug=$(compgen -G "${SYSROOT_DIR}/lib/jvm/java-11-openjdk-*")
+    export JAVA_HOME=${jvm_slug}
+
+  #Use the zip CDT
+    zip_slug="${SYSROOT_DIR}"/bin
+    export PATH=$PATH:${zip_slug}
+
+else
+# Use the system-installed JDK (from RHEL or compatible)
+
+    export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+    export PATH=$JAVA_HOME/bin:$PATH
+fi
+
+
 # Use the system-installed JDK (from RHEL)
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
-export PATH=$JAVA_HOME/bin:$PATH
+#export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+#export PATH=$JAVA_HOME/bin:$PATH
 
 bash compile.sh
 mkdir -p $PREFIX/bin

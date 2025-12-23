@@ -28,7 +28,7 @@ requirements:
     - binutils                # [ s390x ]
     - patch  # [unix]
     - {{ cdt('java-11-openjdk-devel') }}  # [s390x]
-    - zip               # [not s390x]
+    - zip      # [s390x]
   host:
     - unzip
 
